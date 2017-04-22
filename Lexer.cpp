@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "Lexer.h"
+#include "Parser.h"
 using namespace std;
 
 void Lexer::lexer(string s, string & result)
@@ -51,6 +52,27 @@ void Lexer::lexer(string s, string & result)
 		result += "DZIEL ";
 		return;
 	}
+	if (s == "[")
+	{
+		result += "[ ";
+		return;
+	}
+	if (s == "]")
+	{
+		result += "] ";
+		return;
+	}
+	if (s == "(")
+	{
+		result += "( ";
+		return;
+	}
+	if (s == ")")
+	{
+		result += ") ";
+		return;
+	}
+
 
 	//inlicjalizacja maszyny stanów skończonych
 
@@ -73,11 +95,11 @@ void Lexer::lexer(string s, string & result)
 	}
 	if (stan == 2)
 	{
-		for (int i = 0; i < typy.size(); i++)
+		for (int i = 0; i < keywords.size(); i++)
 		{
-			if (s == typy[i])
+			if (s == keywords[i])
 			{
-				result += "TYP ";
+				result = result + s + " " ;
 				return;
 			}
 		}
@@ -111,27 +133,68 @@ int Lexer::recognize(char c)
 Lexer::Lexer(string s)
 {
 	str = s;
-	typy.push_back("bool");
-	typy.push_back("integer");
-	typy.push_back("word");
-	typy.push_back("short");
+	keywords.push_back("bool");
+	keywords.push_back("integer");
+	keywords.push_back("word");
+	keywords.push_back("short");
+	keywords.push_back("array");
+	keywords.push_back("of");
 }
 
 string Lexer::Lex()
 {
-
+	
+	int i = 0;//iterator on tree
 	string s = str;
 	string result, bufor;
 	int nw, od;
 	nw = od = 0;
 	do
 	{
+		
 		nw = s.find(" ");
 		bufor = s.substr(0, nw);
 		s = s.substr(nw + 1, str.size() - nw - 1);
 		od = nw;
 		lexer(bufor, result);
-	} while (nw != string::npos);
+		
+	}while (nw != string::npos);
+	s = result;
+	nw = od = 0;
+	while (nw != string::npos&&i < trees.size())
+	{
+		
+		nw = s.find(" ");
+		bufor = s.substr(0, nw);
+		s = s.substr(nw + 1, result.size() - nw - 1);
+		od = nw;
+
+		trees[i]->AddFather(new Tree(bufor)); //TU JEST BLAD!!!
+		i++;
+		
+	}
+
+
+
+
+
 	result.erase(result.size() - 1, 1);
 	return result;
+}
+void Lexer::Create_Tree()
+{
+	trees.clear();
+	int nw = 0;
+	int od = 0;
+	string s = str;
+	string bufor;
+	do
+	{
+		nw = s.find(" ");
+		bufor = s.substr(0, nw);
+		s = s.substr(nw + 1, str.size() - nw - 1);
+		trees.push_back(new Tree(bufor));
+		od = nw;
+	} while (nw != string::npos);
+	trees.pop_back();
 }
