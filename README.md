@@ -1,2 +1,2 @@
 # Njuton
-Prosty kompilator, a raczej jego zalążek. Lexer napisany w oparciu o deterministyczny automat skończony oraz prosty parser wyrażeń. 
+Prosty kompilator nieistniejącego (jeszcze :P) języka Njuton, a raczej jego zalążek: lexer napisany w oparciu o deterministyczny automat skończony oraz prosty parser wyrażeń. 
